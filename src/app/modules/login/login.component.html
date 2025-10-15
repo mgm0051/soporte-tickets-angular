@@ -1,0 +1,21 @@
+<form [formGroup]="login" (ngSubmit)="getLogin()" autocomplete="off">
+
+    <label for="email">Email:</label>
+    <input id="email" formControlName="email" type="email">
+
+    <label for="password">Contraseña:</label>
+    <div class="password-container">
+    <input id="password" formControlName="password" [type]="passwordVisible ? 'text' : 'password'">
+    </div>
+
+    <button type="submit" [disabled]="login.invalid">Enviar</button>
+
+    <div *ngIf="loginMessage === 'Inicio de sesión correcto'" class="success">
+    <p style="color: green">{{ loginMessage }}</p>
+    </div>
+
+    <div *ngIf="loginMessage && loginMessage !== 'Inicio de sesión correcto'" class="error">
+    <p style="color: red">{{ loginMessage }}</p>
+    </div>
+
+    </form>

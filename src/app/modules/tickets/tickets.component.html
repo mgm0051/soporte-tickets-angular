@@ -1,0 +1,201 @@
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; margin-top: 20px;">
+  <h1><a name="tickets">Tickets</a></h1>
+  <input *ngIf="especialRolUsuario === 'Admin'" type="text" class="form-control mb-3" placeholder="Buscar..." [(ngModel)]="busquedaTexto"/>
+  <button (click)="crearTicket(); verificarBanUsuario(usuarioLoguead)">Crear Ticket</button>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Ref</th>
+        <th>Estado</th>
+        <th>Titulo</th>
+        <th>Descripcion</th>
+        <th>Imagen</th>
+        <th>Fecha Inicio</th>
+        <th>Consulta</th>
+        <th>Usuario</th>
+        <th>Creador</th>
+        <th *ngIf="especialRolUsuario === 'Admin'">Editar</th>
+    </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of ticketsFiltrados; trackBy: trackById" (dblclick)="openMensaje(item.ref); verificarBanUsuario(usuarioLoguead)">
+        <td>{{ item.id }}</td>
+        <td>{{ item.ref }}</td>
+        <td>{{ item.estado }}</td>
+        <td>{{ item.titulo }}</td>
+        <td>{{ item.descripcion }}</td>
+        <td><img src="{{ item.imagenUrl }}"/></td>
+        <td>{{ item.fechaInicio | date:'dd/MM/yyyy HH:mm:ss':'Europe/Madrid' }}</td>
+        <td>{{ item.consultas?.nombre }}</td>
+        <td>{{ item.usuario?.nombre }}</td>
+        <td>{{ item.usuariooCreador?.nombre }}</td>
+        <td *ngIf="especialRolUsuario === 'Admin'"><select [ngStyle]="{'background-color': item.estado === 'open' ? '#c8e6c9': item.estado === 'in progress' ? '#fff9c4': item.estado === 'close' ? '#ffcdd2': 'white'}" (change)="cambiarEstado(item.ref, $event)" (click)="verificarBanUsuario(usuarioLoguead)">
+          <option value="open" [selected]='item.estado == "open"'>Open</option>
+          <option value="in progress" [selected]='item.estado == "in progress"'>In Progress</option>
+          <option value="close" [selected]='item.estado == "close"'>Close</option>
+        </select></td>
+    </tr>
+      <tr *ngIf="tickets.length === 0">
+        <td colspan="4">Tickets no disponible.</td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="modal" tabindex="-1" *ngIf="showModal" [ngClass]="{'show': showModal}" style="display: block;" (click)="closeModal($event)">
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title">Crear Tickets</h5>
+        </div>
+        <div class="modal-body">
+
+<form [formGroup]="nuevoTicket" (ngSubmit)="createTickets()" autocomplete="off">
+    
+    <label for="titulo">Titulo:</label>
+    <input id="titulo" formControlName="titulo" type="text">
+    <div *ngIf="nuevoTicket.get('titulo')?.invalid" class="error">
+      <p style="color: red" *ngIf="nuevoTicket.get('titulo')?.hasError('pattern')">La primera letra debe ser en mayuscula.</p>
+    </div>
+    
+    <label for="descripcion">Descripcion:</label>
+    <textarea name="descripcion" id="descripcion"  formControlName="descripcion" rows="5" cols="5"></textarea>
+    <div *ngIf="nuevoTicket.get('descripcion')?.invalid" class="error">
+      <p style="color: red" *ngIf="nuevoTicket.get('descripcion')?.hasError('minlength')">Se necesitan un minimo de caracteres.</p>
+    </div>
+    <div *ngIf="nuevoTicket.get('descripcion')?.invalid" class="error">
+      <p style="color: red" *ngIf="nuevoTicket.get('descripcion')?.hasError('pattern')">La primera letra debe ser en mayuscula.</p>
+    </div>
+    
+    <label for="imagenUrl">Imagen:</label> 
+    <input id="imagenUrl" formControlName="imagenUrl" type="file" (change)="onFileSelected($event)">
+
+    <label for="usuarioId">Usuario:</label>
+    <select id="usuarioId" formControlName="usuarioId">
+    <option value="">Selecciona el usuario</option>
+      <option *ngFor="let item3 of usuarios" [value]="item3.id">{{ item3.nombre }}</option>   
+    </select>
+
+    <label for="consultaId">Consulta:</label>
+    <select id="consultaId" formControlName="consultaId">
+    <option value="">Selecciona la consulta</option>
+      <option *ngFor="let item2 of consulta" [value]="item2.id">{{ item2.nombre }}</option>   
+    </select>
+
+    <div *ngIf="nuevoTicket.hasError('alMenosUnoRequerido')">
+    <p style="color: red;">Selecciona al menos uno de los dos campos: usuario o consulta.</p>
+    </div>    
+
+    <button type="submit" [disabled]="nuevoTicket.invalid">Enviar</button>
+    <span style="color: green;" *ngIf="ticketCreado">El Ticket ha sido creado correctamente.</span>
+</form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <h1><a name="creacionMensajes">Creacion Mensajes</a></h1>
+
+<br>
+
+<form [formGroup]="nuevoMensaje" (ngSubmit)="createMensajes()" autocomplete="off">
+    
+    <label for="texto">Texto:</label>
+    <textarea name="texto" id="texto"  formControlName="texto" rows="5" cols="5"></textarea>
+    <div *ngIf="nuevoMensaje.get('texto')?.invalid" class="error">
+      <p style="color: red" *ngIf="nuevoMensaje.get('texto')?.hasError('pattern')">La primera letra debe ser en mayuscula.</p>
+    </div>
+    <div *ngIf="nuevoMensaje.get('texto')?.invalid" class="error">
+      <p style="color: red" *ngIf="nuevoMensaje.get('texto')?.hasError('minlength')">Se necesitan un minimo de caracteres.</p>
+    </div>
+    <label for="imagenUrl">Imagen:</label>
+    <input id="imagenUrl" formControlName="imagenUrl" type="text">
+    <label for="usuarioId">Usuario:</label>
+    <select id="usuarioId" formControlName="usuarioId">
+    <option value="">Selecciona el usuario</option>
+      <option *ngFor="let item2 of usuarios" [value]="item2.id">{{ item2.nombre }}</option>
+    </select>
+    <p style="color: red" *ngIf="nuevoMensaje.get('usuarioId')?.hasError('required')">
+    Selecciona un usuario.
+    </p>
+    <label for="ticketsId">Ticket:</label>
+    <select id="ticketsId" formControlName="ticketsId">
+    <option value="">Selecciona el ticket</option>
+      <option *ngFor="let item3 of tickets" [value]="item3.id">{{ item3.ref }}</option>
+    </select>
+    <p style="color: red" *ngIf="nuevoMensaje.get('ticketsId')?.hasError('required')">
+    Selecciona un ticket.
+    </p>
+    <button type="submit" [disabled]="nuevoMensaje.invalid">Enviar</button>
+    <span style="color: green;" *ngIf="mensajeCreado">El mensaje ha sido creado correctamente.</span>
+</form> -->
+
+<!-- Modal para editar Tickets -->
+
+<div class="modal" tabindex="-1" *ngIf="verModal" [ngClass]="{'show': verModal}" style="display: block;" (click)="closeeModal($event)">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar Tickets</h5>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="abrirMensaje" (ngSubmit)="updateTickets()">
+          <div class="form-group">
+            <label for="titulo">Titulo:</label>
+            <input id="titulo" class="form-control" formControlName="titulo" type="text" [readonly]="ticketSeleccionado.estado === 'close'">
+          </div>
+          <div *ngIf="abrirMensaje.get('titulo')?.invalid" class="error">
+            <p style="color: red" *ngIf="abrirMensaje.get('titulo')?.hasError('pattern')">La primera letra debe ser en mayuscula.</p>
+          </div>
+          <div class="form-group">
+            <label for="descripcion">Descripcion:</label>
+            <input id="descripcion" class="form-control" formControlName="descripcion" type="text" [readonly]="ticketSeleccionado.estado === 'close'">
+          </div>
+          <div *ngIf="abrirMensaje.get('descripcion')?.invalid" class="error">
+            <p style="color: red" *ngIf="abrirMensaje.get('descripcion')?.hasError('minlength')">Se necesitan un minimo de caracteres.</p>
+          </div>
+          <div *ngIf="abrirMensaje.get('descripcion')?.invalid" class="error">
+            <p style="color: red" *ngIf="abrirMensaje.get('descripcion')?.hasError('pattern')">La primera letra debe ser en mayuscula.</p>
+          </div>
+          <div class="form-group">
+            <label for="mensajes">Mensajes del Ticket:</label>
+            <ul id="mensajes" class="list-group" [ngClass]="{ 'mensajes-close': ticketSeleccionado.estado === 'close' }">
+              <li *ngFor="let item9 of ticketSeleccionado.mensajes" [ngClass]="{ 'mensaje-izquierda': item9.usuario?.id === ticketSeleccionado.usuariooCreador?.id,'mensaje-derecha': item9.usuario?.id !== ticketSeleccionado.usuariooCreador?.id }">
+                <div class="usuMens">
+                  <div class="mensaje-texto">
+                    <span>{{ item9.texto }}</span>
+                    <small> - {{ item9.usuario?.nombre }}</small>
+                  </div>
+                  <div class="image-container">
+                    <img *ngIf="item9.imagenUrl" [src]="item9.imagenUrl"/>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div class="form-group">
+            <label *ngIf="ticketSeleccionado.estado !== 'close'" for="añadirMensaje">Añadir Mensaje: &nbsp;</label>
+            <textarea *ngIf="ticketSeleccionado.estado !== 'close'" id="añadirMensaje" formControlName="añadirMensaje" rows="4" cols="50" [disabled]="ticketSeleccionado.estado === 'close'"></textarea>
+          </div>
+          <div class="form-group">
+            <label *ngIf="ticketSeleccionado.estado !== 'close'" for="imagenUrl">Adjuntar Imagen:</label>
+            <input *ngIf="ticketSeleccionado.estado !== 'close'" id="imagenUrl" type="file" (change)="onFileSelected($event)" [disabled]="ticketSeleccionado.estado === 'close'">
+          </div>
+          <div *ngIf="abrirMensaje.get('añadirMensaje')?.invalid" class="error">
+            <p style="color: red" *ngIf="abrirMensaje.get('añadirMensaje')?.hasError('minlength')">Se necesitan un minimo de caracteres.</p>
+          </div>
+            <div *ngIf="abrirMensaje.get('añadirMensaje')?.invalid" class="error">
+            <p style="color: red" *ngIf="abrirMensaje.get('añadirMensaje')?.hasError('pattern')">La primera letra debe ser en mayuscula.</p>
+          </div>
+          <div class="botones" [ngClass]="{ 'boton-close': ticketSeleccionado.estado === 'close' }">
+            <button *ngIf="ticketSeleccionado.estado !== 'close'" type="submit" class="guardar" [disabled]="!abrirMensaje.valid" [disabled]="ticketSeleccionado.estado === 'close'">Guardar Cambios</button>
+            <button *ngIf="ticketSeleccionado.estado !== 'close'" type="button" class="guardar" [disabled]="!abrirMensaje.valid" (click)="crearMensaje()" [disabled]="ticketSeleccionado.estado === 'close'">Enviar</button>
+            <button type="button" class="eliminacion" aria-label="Close" (click)="closeeModal($event)">Cerrar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

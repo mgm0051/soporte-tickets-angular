@@ -1,0 +1,48 @@
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; margin-top: 20px;">
+  <h1 *ngIf="especialRolUsuario === 'Admin'"><a name="rolesEspeciales">Roles Especiales</a></h1>
+  <input *ngIf="especialRolUsuario === 'Admin'" type="text" class="form-control mb-3" placeholder="Buscar..." [(ngModel)]="busquedaTexto"/>
+  <button *ngIf="especialRolUsuario === 'Admin'" (click)="openCrearModal(); verificarBanUsuario(usuarioLoguead)">Crear Rol Especial</button>
+</div>
+
+<table *ngIf="especialRolUsuario === 'Admin'">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Eliminar</th>
+    </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of rolesEspecialesFiltrados; trackBy: trackById">
+        <td>{{ item.id }}</td>
+        <td>{{ item.nombre }}</td>
+        <td><button class="eliminacion" (click)="confirmarEliminacion(item.id); verificarBanUsuario(usuarioLoguead)">Eliminar</button></td>
+    </tr>
+      <tr *ngIf="especial_rol.length === 0">
+        <td colspan="4">Roles Especiales no disponible.</td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="modal" tabindex="-1" *ngIf="showModal" [ngClass]="{'show': showModal}" style="display: block;" (click)="closeModal($event)">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Crear Rol Especial</h5>
+      </div>
+      <div class="modal-body">
+
+<form [formGroup]="nuevoEspecialRol" (ngSubmit)="createEspecialRol()" autocomplete="off">
+    
+    <label for="nombre">Nombre:</label>
+    <input id="nombre" formControlName="nombre" type="text">
+    <div *ngIf="nuevoEspecialRol.get('nombre')?.invalid" class="error">
+      <p style="color: red" *ngIf="nuevoEspecialRol.get('nombre')?.hasError('pattern')">La primera letra debe ser en mayuscula.</p>
+    </div>
+    <button type="submit" [disabled]="nuevoEspecialRol.invalid">Enviar</button>
+    <span style="color: green;" *ngIf="especialRolcreado">El rol especial ha sido creado correctamente.</span>
+</form>
+      </div>
+    </div>
+  </div>
+</div>

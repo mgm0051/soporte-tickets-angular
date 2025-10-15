@@ -1,0 +1,103 @@
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; margin-top: 20px;">
+  <h1><a name="consultas">Consultas</a></h1>
+   <input *ngIf="especialRolUsuario === 'Admin'" type="text" class="form-control mb-3" placeholder="Buscar..." [(ngModel)]="busquedaTexto"/>
+  <button (click)="openCrearModal(); verificarBanUsuario(usuarioLoguead)">Crear Consulta</button>
+</div>
+
+<table>
+  <thead>
+  <tr>
+    <th *ngIf="especialRolUsuario === 'Admin'">ID</th>     
+    <th>Nombre</th>
+    <th *ngIf="especialRolUsuario === 'Admin'">Eliminar</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of consultasFiltradas; trackBy: trackById">
+      <td *ngIf="especialRolUsuario === 'Admin'">{{ item.id }}</td>
+      <td>{{ item.nombre }}</td>
+      <td *ngIf="especialRolUsuario === 'Admin'"><button class="eliminacion" (click)="confirmarEliminacion(item.id); verificarBanUsuario(usuarioLoguead)">Eliminar</button></td>
+    </tr>
+    <tr *ngIf="consulta.length === 0">
+      <td colspan="4">Consultas no disponible.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="modal" tabindex="-1" *ngIf="showModal" [ngClass]="{'show': showModal}" style="display: block;" (click)="closeModal($event)">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Crear Consulta</h5>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="nuevaConsulta" (ngSubmit)="createConsulta()" autocomplete="off">
+            <label for="nombre">Nombre:</label>
+            <input id="nombre" class="form-control" formControlName="nombre" type="text">
+            <div *ngIf="nuevaConsulta.get('nombre')?.invalid" class="error">
+              <p style="color: red" *ngIf="nuevaConsulta.get('nombre')?.hasError('pattern')">La primera letra debe ser en mayuscula.</p>
+            </div>
+            <label for="usuario">Usuarios:</label>
+            <select id="usuario" formControlName="usuario" multiple class="form-control">
+              <option *ngFor="let item2 of usuarios" [value]="item2">{{ item2.nombre }}</option>
+            </select>
+          <button type="submit" [disabled]="nuevaConsulta.invalid">Crear</button>
+          <span style="color: green;" *ngIF="consultaCreada">La consulta ha sido creada</span>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<br><br>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; margin-top: 20px;">
+  <h1><a name="usuarioConsulta">Consultas Usuarios</a></h1>
+   <input *ngIf="especialRolUsuario === 'Admin'" type="text" class="form-control mb-3" placeholder="Buscar..." [(ngModel)]="busquedaTextoo" style="position: absolute; left: 50%; transform: translateX(-50%); width: 200px;"/>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Consultas</th>
+      <th>Usuarios</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of consultaFiltrada; trackBy: trackById" (dblclick)='openConsulta(item); verificarBanUsuario(usuarioLoguead)'>
+    <td>{{ item.nombre }}</td>
+    <td><p *ngFor="let item2 of item.usuario">{{ item2.nombre }}</p></td>
+    </tr>
+    <tr *ngIf="consulta.length === 0">
+    <td colspan="4">Consultas Usuarios no disponible.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="modal" tabindex="-1" *ngIf="ensenaModal" [ngClass]="{'show': ensenaModal}" style="display: block;" (click)="closeeModaal($event)">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar Usuario</h5>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="consultaEditada" (ngSubmit)="updateConsulta()">
+          <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input id="nombre" class="form-control" formControlName="nombre" type="text">
+          </div>
+          <div *ngIf="consultaEditada.get('nombre')?.invalid" class="error">
+            <p style="color: red" *ngIf="consultaEditada.get('nombre')?.hasError('pattern')">La primera letra debe ser en mayuscula.</p>
+          </div>
+          <div class="form-group">
+            <label for="usuario">Usuarios: &nbsp;</label>
+            <select id="usuario" formControlName="usuario" multiple class="form-control">
+              <option *ngFor="let item5 of usuarios" [value]="item5.id">{{ item5.nombre }}</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary" [disabled]="!consultaEditada.valid">Guardar Cambios</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

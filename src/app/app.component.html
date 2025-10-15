@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+<body>
+
+<app-login *ngIf="!isLoggedIn" (loginExitoso)="onLoginSuccess()"></app-login>
+
+<div *ngIf="isLoggedIn">
+
+    <app-menu></app-menu>
+	
+    <div class="main-container" *ngIf="!nothome">
+        <header>
+            <h1>Bienvenidos a Sicnova</h1>
+            <p>Conocidos por la Impresion 3D y la Innovación</p>
+        </header>
+
+        <main>
+            <p class="intro">
+            En Sicnova, nos dedicamos a brindar soluciones efectivas y de calidad. Nuestro equipo de profesionales está listo para ayudarte a alcanzar tus objetivos.
+            </p>
+
+            <section class="image-gallery">
+                <img src="https://cdn.pixabay.com/photo/2017/06/18/16/13/printer-2416269_1280.jpg" alt="Impresora 3D">
+                <img src="https://cdn.pixabay.com/photo/2020/11/23/16/51/cnc-5770325_1280.jpg" alt="Máquina">
+                <img src="https://cdn.pixabay.com/photo/2016/11/04/11/46/robot-1797548_1280.png" alt="Pieza Metalica">
+            </section>
+
+            <div class="section" id="servicios">
+                <h2>Nuestros Servicios</h2>
+                <div class="services">
+                    <div class="service-box">
+                        <h3>Impresión 3D Industrial</h3>
+                        <p>Producción de piezas funcionales con tecnología FDM, SLA y SLS para prototipos, moldes y fabricación final.</p>
+                    </div>
+                    <div class="service-box">
+                        <h3>Diseño y Prototipado</h3>
+                        <p>Convertimos tus ideas en modelos 3D precisos para validación, iteración y prueba de concepto rápida.</p>
+                    </div>
+                    <div class="service-box">
+                        <h3>Automatización y Robótica</h3>
+                        <p>Desarrollamos sistemas automatizados para líneas de producción y robots colaborativos.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Nuestra Misión y Valores</h2>
+                <div class="values">
+                    <div class="value-box">
+                        <h4>Innovación</h4>
+                        <p>Aplicamos las tecnologías más recientes para ofrecer soluciones creativas y eficaces.</p>
+                    </div>
+                    <div class="value-box">
+                        <h4>Calidad</h4>
+                        <p>Cada proyecto se ejecuta con precisión, cuidando cada detalle del proceso de fabricación.</p>
+                    </div>
+                    <div class="value-box">
+                        <h4>Compromiso</h4>
+                        <p>Nos dedicamos al éxito de nuestros clientes, trabajando como socios tecnológicos estratégicos.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            © 2025 Sicnova - Todos los derechos reservados
+        </footer>
+
+    </div>
+
+    <router-outlet *ngIf="nothome"></router-outlet>
+    
+    <a (click)="subir()" class="btn-flotante"><i class="fas fa-arrow-up"></i></a>
+
+</div>
+
+</body>
+
+</html>

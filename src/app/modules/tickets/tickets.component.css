@@ -1,0 +1,156 @@
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+input {
+    margin: 10px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px
+}
+
+select {
+    padding: 8px;
+    border: 1px solid black;
+    text-align: left;
+    width: 200px
+}
+
+img {
+    width: 80px;
+    height: 80px;
+}
+
+textarea {
+    padding: 10px;
+    text-align: left;
+    width: 200px
+}
+
+button {
+    padding: 16px;
+    background-color: rgb(105, 216, 250);
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 8px;
+    width: 120px;
+    text-align:center;
+    border: none;
+}
+
+button:hover {
+    background-color: rgb(0, 201, 0);
+}
+
+button[type="button"]:hover {
+    background-color: #2980b9;
+}
+
+button.eliminacion:hover {
+    background-color: red;
+}
+
+.botones {
+    display: flex;
+    gap: 10px;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+}  
+
+modal.show {
+    display: block;
+}
+
+.modal-dialog {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 90%;
+    overflow-y: auto;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.modal-title {
+    margin: 0 0 2em 0;
+}
+
+#mensajes {
+    height: 180px;
+    overflow: auto;
+}
+
+.mensajes-close {
+    height: 370px !important;
+}
+
+.boton-close{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.mensaje-izquierda {
+    text-align: left;
+    justify-content: flex-start;
+    display: flex;
+}
+
+.mensaje-derecha {
+    text-align: right;
+    justify-content: flex-end;
+    display: flex;
+}
+
+.usuMens {
+    max-width: 70%;
+    background-color: #f1f1f1;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 5px;
+}
+
+.mensaje-derecha .usuMens {
+    background-color: #d1e7dd;
+}
+
+.mensaje-izquierda .usuMens {
+    background-color: #bbeafd;
+}
+
+.image-container img {
+    margin-top: 12px;
+}

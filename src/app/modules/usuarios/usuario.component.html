@@ -1,0 +1,172 @@
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; margin-top: 20px;">
+  <h1><a id="usuarios">Usuarios</a></h1>
+  <input *ngIf="especialRolUsuario === 'Admin'" type="text" class="form-control mb-3" placeholder="Buscar..." [(ngModel)]="busquedaTexto"/>
+  <button *ngIf="especialRolUsuario === 'Admin'" (click)="openCrearModal(); verificarBanUsuario(usuarioLoguead)">Crear Usuario</button>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th *ngIf="especialRolUsuario === 'Admin'">ID</th>
+      <th>Nombre</th>
+      <th>Email</th>
+      <th>Contacto</th>
+      <th>ImagenPerfil</th>
+      <th *ngIf="especialRolUsuario === 'Admin'">Isban</th>
+      <th>Roles</th>
+      <th>Roles Especiales</th>
+      <th *ngIf="especialRolUsuario === 'Admin'">Eliminar</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of usuariosFiltrados; trackBy: trackById" (dblclick)="openEditModal(item); verificarBanUsuario(usuarioLoguead)">
+      <td *ngIf="especialRolUsuario === 'Admin'">{{ item.id }}</td>
+      <td>{{ item.nombre }}</td>
+      <td>{{ item.email }}</td>
+      <td>{{ item.contacto }}</td>
+      <td><img src="{{ item.imagenPerfilurl }}"/></td>
+      <td *ngIf="especialRolUsuario === 'Admin'">{{ item.isban }}</td>
+      <td><p *ngFor="let item2 of item.roles">{{ item2.nombre }}</p></td>
+      <td><p *ngFor="let item3 of item.especialrol">{{ item3.nombre }}</p></td>
+      <td *ngIf="especialRolUsuario === 'Admin'"><button class="eliminacion" (click)="confirmarEliminacion(item.email); verificarBanUsuario(usuarioLoguead)">Eliminar</button></td>
+    </tr>
+    <tr *ngIf="usuarios.length === 0">
+      <td colspan="4">Usuarios no disponible.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="modal" tabindex="-1" *ngIf="showwModal" [ngClass]="{'show': showwModal}" style="display: block;" (click)="closeeModal($event)">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Crear Usuario</h5>
+      </div>
+      <div class="modal-body">
+
+<form [formGroup]="nuevoUsuario" (ngSubmit)="createUsuario()" autocomplete="off">
+
+    <label for="nombre">Nombre:</label>
+    <input id="nombre" formControlName="nombre" type="text">
+    <div *ngIf="nuevoUsuario.get('nombre')?.invalid" class="error">
+      <p style="color: red" *ngIf="nuevoUsuario.get('nombre')?.hasError('pattern')">La primera letra debe ser en mayuscula.</p>
+    </div>
+
+    <label for="email">Email:</label>
+    <input id="email" formControlName="email" type="email">
+    <div *ngIf="nuevoUsuario.get('email')?.invalid" class="error">
+      <p style="color: red" *ngIf="nuevoUsuario.get('email')?.hasError('email')">El correo electrónico no es válido.</p>
+    </div>
+
+    <label for="contacto">Contacto:</label>
+    <input id="contacto" formControlName="contacto" type="text">
+    <div *ngIf="nuevoUsuario.get('contacto')?.invalid" class="error">
+      <p style="color: red" *ngIf="nuevoUsuario.get('contacto')?.hasError('pattern')">El número de teléfono no es válido.</p>
+    </div>
+
+    <label for="password">Contraseña:</label>
+    <div class="password-container">
+        <input id="password" formControlName="password" [type]="passwordVisible ? 'text' : 'password'">
+        <span class="mostrar" (click)="togglePasswordVisibility()">
+        {{ passwordVisible ? 'Ocultar Contraseña' : 'Mostrar Contraseña' }}
+        </span>
+    </div>
+
+    <div *ngIf="nuevoUsuario.get('password')?.invalid" class="error">
+      <p style="color: red" *ngIf="nuevoUsuario.get('password')?.hasError('pattern')">La contraseña debe contener Letras (al menos una mayus), Números, Signos de puntuación y al menos 8 caracteres.</p>
+    </div>
+
+    <label for="confirmPassword">Confirmar Contraseña:</label>
+    <div class="password-container">
+        <input id="confirmPassword" formControlName="confirmPassword" [type]="confirmPasswordVisible ? 'text' : 'password'">
+        <span class="mostrar" (click)="toggleConfirmPasswordVisibility()">
+        {{ confirmPasswordVisible ? 'Ocultar Contraseña' : 'Mostrar Contraseña' }}
+        </span>
+    </div>
+
+      <div *ngIf="nuevoUsuario.get('confirmPassword')?.invalid || nuevoUsuario.hasError('passwordsDoNotMatch')" class="error">
+        <p style="color: red" *ngIf="nuevoUsuario.hasError('passwordsDoNotMatch')">Las contraseñas no coinciden.</p>
+    </div>
+
+    <label for="imagenPerfilurl">Imagen:</label>
+    <input id="imagenPerfilurl" formControlName="imagenPerfilurl" type="file" (change)="onFileSelected($event)">
+
+    <label for="roles">Roles:</label>
+    <select id="roles" formControlName="roles" multiple>
+      <option *ngFor="let item2 of roles" [value]="item2">{{ item2.nombre }}</option>
+    </select>
+
+    <label for="especialrol">Roles Especiales:</label>
+    <select id="especialrol" formControlName="especialrol" multiple>
+      <option *ngFor="let item3 of especial_rol" [value]="item3">{{ item3.nombre }}</option>
+    </select>
+
+    <button type="submit" [disabled]="nuevoUsuario.invalid">Crear</button>
+    <span class="errorEmail" style="color: red;" *ngIf="emailError">El email esta en uso.</span>
+    <span style="color: green;" *ngIf="usuarioCreado">El Usuario ha sido creado correctamente.</span>
+</form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para editar usuario -->
+
+<div class="modal" tabindex="-1" *ngIf="showModal" [ngClass]="{'show': showModal}" style="display: block;" (click)="closeModal($event)">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar Usuario</h5>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="usuarioEditado" (ngSubmit)="actuUsuario()">
+          <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input id="nombre" class="form-control" formControlName="nombre" type="text">
+          </div>
+          <div *ngIf="usuarioEditado.get('nombre')?.invalid" class="error">
+            <p style="color: red" *ngIf="usuarioEditado.get('nombre')?.hasError('pattern')">La primera letra debe ser en mayuscula.</p>
+            </div>
+          <div class="form-group">
+            <label for="email">Correo:</label>
+            <input id="email" class="form-control" formControlName="email" type="email" readonly="readonly">
+          </div>
+          <div *ngIf="usuarioEditado.get('email')?.invalid" class="error">
+            <p style="color: red" *ngIf="usuarioEditado.get('email')?.hasError('email')">El correo electrónico no es válido.</p>
+          </div>
+          <div class="form-group">
+            <label for="contacto">Contacto:</label>
+            <input id="contacto" class="form-control" formControlName="contacto" type="text">
+          </div>
+          <div *ngIf="usuarioEditado.get('contacto')?.invalid" class="error">
+            <p style="color: red" *ngIf="usuarioEditado.get('contacto')?.hasError('pattern')">El número de teléfono no es válido.</p>
+          </div>
+          <div class="form-group">
+            <label for="imagenPerfilurl">Imagen de Perfil:</label>
+            <input id="imagenPerfilurl" class="form-control" formControlName="imagenPerfilurl" type="file" (change)="onFileSelected($event)">
+          </div>
+          <div *ngIf="especialRolUsuario === 'Admin'" class="form-group">
+            <label for="isban">Isban:</label>
+            <input id="isban" class="form-control" formControlName="isban" type="checkbox">
+          </div>
+          <div *ngIf="especialRolUsuario === 'Admin'" class="form-group">
+          <label for="roles">Roles: &nbsp;</label>
+          <select id="roles" formControlName="roles" multiple>
+            <option *ngFor="let item5 of roles" [value]="item5">{{ item5.nombre }}</option>
+          </select>
+          </div>
+          <div *ngIf="especialRolUsuario === 'Admin'" class="form-group">
+          <label for="especialrol">Roles Especiales: &nbsp;</label>
+          <select id="especialrol" formControlName="especialrol" multiple>
+            <option *ngFor="let item6 of especial_rol" [value]="item6">{{ item6.nombre }}</option>
+          </select>
+          </div>
+          <button type="submit" class="guardar" [disabled]="!usuarioEditado.valid">Guardar Cambios</button>
+          <span class="errorEmail" style="color: red;" *ngIf="emailError">El email esta en uso.</span>
+          <span style="color: green;" *ngIf="usuarioCreado">El Usuario ha sido guardado correctamente.</span>
+          <button type="button" class="eliminacion" aria-label="Close" (click)="closeModal($event)">Cerrar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

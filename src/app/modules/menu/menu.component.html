@@ -1,0 +1,12 @@
+<nav class="menu" id="menu">
+    <ul>
+        <li><a href="">Home</a></li>   
+        <li><a href="home#usuarios" (click)="verificarBanUsuario(usuarioLoguead)">Usuarios</a></li>
+        <li><a href="home#tickets" (click)="verificarBanUsuario(usuarioLoguead)">Tickets</a></li>
+        <li><a href="home#consultas" (click)="verificarBanUsuario(usuarioLoguead)">Consultas</a></li>
+        <li><a href="home#usuarioConsulta" (click)="verificarBanUsuario(usuarioLoguead)">Consultas Usuarios</a></li>
+        <li *ngIf="especialRolUsuario === 'Admin'"><a href="home#roless" (click)="verificarBanUsuario(usuarioLoguead)">Roles</a></li>
+        <li *ngIf="especialRolUsuario === 'Admin'"><a href="home#rolesEspeciales" (click)="verificarBanUsuario(usuarioLoguead)">Roles Especiales</a></li>
+        <li><button (click)="confirmarLogout(); verificarBanUsuario(usuarioLoguead)">Logout</button></li>
+    </ul>
+</nav>
